@@ -21,3 +21,18 @@ code {
   font-size: 12px;
 
 }
+.slot-border{
+  height: 20px;
+  width: 10px;
+  border: 1px solid gray;
+  border-width: 0px 1px 1px 0px;
+}
+.slot-border-dashed{
+  height: 20px;
+  width: 10px;
+  border: 1px solid gray;
+  border-width: 0px 1px 1px 0px;
+}
+.slot-time{
+  
+}
