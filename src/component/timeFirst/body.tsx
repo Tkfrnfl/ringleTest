@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled, { css } from "styled-components";
 
-import { addDays, format } from "date-fns";
-import { ko } from "date-fns/locale";
+import { addDays, addHours, format } from "date-fns";
+import { ko, tr } from "date-fns/locale";
 import {
 	CaptionProps,
 	DayPicker,
@@ -15,31 +15,18 @@ import "react-day-picker/dist/style.css";
 import "../../css/index.css";
 
 const today = new Date();
-const todayDefault = new Date();
 
 export default () => {
 	const [screenSize, setScreenSize] = useState(getCurrentDimension());
 	const [showNotice, setShowNotice] = useState(true);
 
-	const noticeClose = () => {
-		setShowNotice(false);
-	};
-	const formatCaption: DateFormatter = (month, options) => {
-		return (
-			<>
-				<span>{today.getFullYear()}년 &nbsp;</span>
-
-				{format(month, "LLLL", { locale: options?.locale })}
-			</>
-		);
-	};
 	function getCurrentDimension(): any {
+		//화면 리사이징
 		return {
 			width: window.innerWidth,
 			height: window.innerHeight,
 		};
 	}
-
 	useEffect(() => {
 		const updateDimension = () => {
 			setScreenSize(getCurrentDimension());
@@ -51,95 +38,25 @@ export default () => {
 		};
 	}, [screenSize]);
 
-	const SlotCols = styled.div<{ width: number }>`
-		width: ${(props) => props.width}px;
-	`;
-	const Notice = styled.div<{ width: number }>`
-		width: ${(props) => props.width}px;
-	`;
+	const formatCaption: DateFormatter = (month, options) => {
+		//달력 헤더 커스텀
+		return (
+			<>
+				<span>{today.getFullYear()}년 &nbsp;</span>
 
+				{format(month, "LLLL", { locale: options?.locale })}
+			</>
+		);
+	};
+	//range State 기본값
 	const defaultSelected: DateRange = {
 		from: addDays(today, today.getDay() * -1),
 		to: addDays(today, 6 - today.getDay()),
 	};
+
 	const [range, setRange] = useState<DateRange | undefined>(defaultSelected);
 
-	const hours: string[] = [
-		"자정0시",
-		"새벽1시",
-		"새벽2시",
-		"새벽3시",
-		"오전5시",
-		"오전6시",
-		"오전7시",
-		"오전8시",
-		"오전9시",
-		"오전10시",
-		"오전11시",
-		"정오12시",
-		"오후13시",
-		"오후14시",
-		"저녁19시",
-		"저녁20시",
-		"저녁21시",
-		"저녁22시",
-		"저녁23시",
-	];
-	const hourList: JSX.Element[] = hours.map((hour, index) => {
-		return (
-			<div key={index} className="row">
-				<div className="relative w-[70px] h-[30px]">
-					<div className="absolute right-[1px] slot-border"></div>
-				</div>
-
-				<div className="relative w-[70px] h-[30px]">
-					<div className="-mt-4 slot-time">{hour}</div>
-					<div className="-mt-4 absolute right-[1px] slot-border-dashed"></div>
-				</div>
-			</div>
-		);
-	});
-	const hoursNumber: string[] = [
-		"0",
-		"1",
-		"2",
-		"3",
-		"5",
-		"6",
-		"7",
-		"8",
-		"9",
-		"10",
-		"11",
-		"12",
-		"13",
-		"14",
-		"19",
-		"20",
-		"21",
-		"22",
-		"23",
-	];
-	const hourNumberList: JSX.Element[] = hoursNumber.map((hour, index) => {
-		return (
-			<div key={index} className="row">
-				<div className="relative w-[10px] h-[30px]">
-					{hour}
-				</div>
-			</div>
-		);
-	});
-	const date: string[] = ["일", "월", "화", "수", "목", "금", "토"];
-	const dateList: JSX.Element[] = date.map((date, index) => {
-		return (
-			<div key={index} className="row">
-				<div>{date}</div>
-				<div>{range!.from!.getDate() + index}</div>
-				<div>{hourNumberList}</div>
-			</div>
-		);
-	});
-
+	// 달력과 연동된 버튼 부분
 	const onClickToday = () => {
 		const today = new Date();
 		setRange({
@@ -184,7 +101,7 @@ export default () => {
 	const [originMonth, setOriginMonth] = useState<Date | undefined>(
 		defaultSelected.from,
 	);
-
+	//달력에서 범위 누를시
 	const onClickRange = (props: any) => {
 		if (props.to == undefined) {
 			setRange({
@@ -204,30 +121,275 @@ export default () => {
 				});
 			}
 		}
-
-		console.log(range);
 	};
+	//달력 css
 	const css = `
-  .my-selected:not([disabled]) { 
-    border: 2px solid purple;
-    border-width: 2px 0px 2px 0px ;
-  }
-  .my-selected:hover:not([disabled]) { 
+.my-selected:not([disabled]) { 
+border: 2px solid purple;
+border-width: 2px 0px 2px 0px ;
+}
+.my-selected:hover:not([disabled]) { 
 
-  }
-  .my-today { 
-    font-weight: bold;
-    color: balck;
-  }
+}
+.my-today { 
+font-weight: bold;
+color: balck;
+}
 `;
+	const noticeClose = () => {
+		setShowNotice(false);
+	};
+
+	const SlotCols = styled.div<{ width: number }>`
+		width: ${(props) => props.width}px;
+	`;
+	const Notice = styled.div<{ width: number }>`
+		width: ${(props) => props.width}px;
+	`;
+	const SlotColsSm = styled.div<{ width: number }>`
+		width: ${(props) => props.width}px;
+	`;
+	//날짜 슬롯부분 함수
+	function onHoverButton(props: any) {
+		const btnArr = props.target.id.split("|");
+		let btnId;
+		if (btnArr[1] == undefined) {
+			btnId = btnArr[0];
+		} else {
+			btnId = btnArr[0] + btnArr[1];
+		}
+
+		const btn = document.getElementById(btnId);
+
+		if (btn) {
+			btn!.style.visibility = "visible";
+		}
+	}
+	function onLeaveButton(props: any) {
+		const btnArr = props.target.id.split("|");
+		let btnId;
+		if (btnArr[1] == undefined) {
+			btnId = btnArr[0];
+		} else {
+			btnId = btnArr[0] + btnArr[1];
+		}
+
+		const btn = document.getElementById(btnId);
+
+		if (btn) {
+			btn!.style.visibility = "hidden";
+		}
+	}
+
+	const hours: string[] = [
+		"자정0시",
+		"새벽1시",
+		"새벽2시",
+		"새벽3시",
+		"오전5시",
+		"오전6시",
+		"오전7시",
+		"오전8시",
+		"오전9시",
+		"오전10시",
+		"오전11시",
+		"정오12시",
+		"오후13시",
+		"오후14시",
+		"저녁19시",
+		"저녁20시",
+		"저녁21시",
+		"저녁22시",
+		"저녁23시",
+	];
+	//각시간대 컴포넌트 생성
+	const hourList: JSX.Element[] = hours.map((hour, index) => {
+		return (
+			<div key={index} className="row">
+				<div className="relative w-[70px] h-[42px]">
+					<div className="absolute right-[1px] slot-border"></div>
+				</div>
+
+				<div className="relative w-[70px] h-[30px] text-xs">
+					<div className="-mt-4 slot-time">{hour}</div>
+					<div className="-mt-4 absolute right-[1px] slot-border-dashed"></div>
+				</div>
+			</div>
+		);
+	});
+	const hoursNumber: number[] = [
+		0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 19, 20, 21, 22, 23,
+	];
+	//시간대 슬롯 컴포넌트 생성
+	//range State기반으로 생성 현재시간과 비교하여 생성
+	function hourNumberList(numSlot: number): JSX.Element[] {
+		const arr: JSX.Element[] = [];
+
+		for (let i = 0; i < hoursNumber.length; i++) {
+			const gridDateO = addDays(range!.from!, numSlot);
+			const gridDateHalf = addDays(range!.from!, numSlot);
+			let futureDate = today;
+
+			let oclock, half;
+			oclock = true;
+			half = true;
+
+			gridDateO.setHours(hoursNumber[i]);
+			gridDateO.setMinutes(0);
+			gridDateHalf.setHours(hoursNumber[i]);
+			gridDateHalf.setMinutes(30);
+
+			futureDate = addDays(futureDate, 1);
+			futureDate = addHours(futureDate, 2);
+
+			if (futureDate > gridDateHalf) {
+				half = false;
+			}
+			if (futureDate > gridDateO) {
+				oclock = false;
+			}
+
+			if (hoursNumber[i] == 3 || hoursNumber[i] == 14) {
+				arr.push(
+					<SlotColsSm
+						key={i}
+						className="row"
+						onClick={() => {
+							onClickSlot(i);
+						}}
+						width={(screenSize.width - 700) / 8}
+					>
+						<div className="relative  h-[30px] bg-purple-300"></div>
+						<div className="relative  h-[30px]  bg-purple-300"></div>
+					</SlotColsSm>,
+				);
+			} else {
+				arr.push(
+					<div
+						key={i}
+						className="row"
+						onClick={() => {
+							onClickSlot(i);
+						}}
+					>
+						{oclock ? (
+							<div
+								id={String(numSlot) + String(hoursNumber[i]) + "|on"}
+								className="relative  h-[20px]"
+								onMouseOver={(e: any) => {
+									onHoverButton(e);
+								}}
+								onMouseLeave={(e: any) => {
+									onLeaveButton(e);
+								}}
+							>
+								<div
+									className="btn-hide"
+									id={String(numSlot) + String(hoursNumber[i]) + "on"}
+								>
+									test
+								</div>
+							</div>
+						) : (
+							<div className="relative  h-[20px] bg-purple-300"></div>
+						)}
+						{half ? (
+							<div
+								id={String(numSlot) + String(hoursNumber[i]) + "|half"}
+								className="relative  h-[20px]"
+								onMouseOver={(e: any) => {
+									onHoverButton(e);
+								}}
+								onMouseLeave={(e: any) => {
+									onLeaveButton(e);
+								}}
+							>
+								<div
+									className="btn-hide"
+									id={String(numSlot) + String(hoursNumber[i]) + "half"}
+								>
+									test
+								</div>
+							</div>
+						) : (
+							<div className="relative  h-[20px]  bg-purple-300"></div>
+						)}
+					</div>,
+				);
+			}
+		}
+		return arr;
+	}
+
+	const date: string[] = ["일", "월", "화", "수", "목", "금", "토"];
+	//요일 헤더 컴포넌트 생성
+	const dateListHeader: JSX.Element[] = date.map((date, index) => {
+		const indexPlusDate = addDays(range!.from!, index);
+		return (
+			<div key={index}>
+				<div key={index} className="row text-center text-sm ">
+					{today.getDay() == index ? (
+						<SlotColsSm
+							className="topbar-slot-today"
+							width={(screenSize.width - 700) / 7}
+						>
+							<div>{date}</div>
+							<div className="slot-day-of-week-today">
+								{indexPlusDate.getDate()}
+							</div>
+						</SlotColsSm>
+					) : today.getDay() != index && (date == "일" || date == "토") ? (
+						<SlotColsSm
+							className="topbar-slot-holiday"
+							width={(screenSize.width - 700) / 8}
+						>
+							<div>{date}</div>
+							<div className="slot-day-of-week">{indexPlusDate.getDate()}</div>
+						</SlotColsSm>
+					) : (
+						<SlotColsSm className="" width={(screenSize.width - 700) / 8}>
+							<div>{date}</div>
+							<div className="slot-day-of-week">{indexPlusDate.getDate()}</div>
+						</SlotColsSm>
+					)}
+				</div>
+			</div>
+		);
+	});
+	function dateList(): JSX.Element[] {
+		//요일별로 시간대 슬롯 생성 요청
+		const arr: JSX.Element[] = [];
+
+		for (let i = 0; i < 7; i++) {
+			arr.push(
+				<div
+					onClick={() => {
+						onClickSlot(i);
+					}}
+				>
+					{hourNumberList(i)}
+				</div>,
+			);
+		}
+		return arr;
+	}
+
+	const onClickSlot = (props: any) => {
+		console.log(props);
+	};
+	const onClickSlotRow = (props: any) => {
+		console.log(props);
+	};
+
+	//body 전체 컴포넌트
 	return (
 		<div className="flex ">
 			<div>
 				<div className="h-[110px]"> </div>
-				<div className="min-w-[250px]">
+				<div className="min-w-[220px]">
 					<style>{css}</style>
 					<DayPicker
-						className="DayPicker"
+						className="DayPicker rdp"
 						mode="range"
 						selected={range}
 						onSelect={onClickRange}
@@ -243,9 +405,6 @@ export default () => {
 							selected: "my-selected",
 							today: "my-today",
 						}}
-						// modifiersStyles={{
-						// 	disabled: { fontSize: "75%" },
-						// }}
 					/>
 				</div>
 				<div className="mb-[48px] pt-[16px] text-center absolute bottom-0 ml-12 ">
@@ -315,24 +474,17 @@ export default () => {
 							onClickToday();
 						}}
 					>
-						<div
-							className="inline-block font-normal text-center text-xs leading-snug box-border btn-sm bg-white chip-md text-purple-500 border border-purple-500 hover:bg-opacity-80 rounded-xl p-1 w-14"
-							//style="padding-top: 3px; padding-bottom: 3px; font-size: 12px; margin-top: 0px; margin-right: 11px;"
-						>
+						<div className="inline-block font-normal text-center text-xs leading-snug box-border btn-sm bg-white chip-md text-purple-500 border border-purple-500 hover:bg-opacity-80 rounded-xl p-1 w-14">
 							오늘
 						</div>
 					</button>
 					<button
-						//data-ref="btn_previous"
 						className="appearance-none box-border focus:outline-none cursor-pointer"
 						onClick={() => {
 							onClickBefore();
 						}}
 					>
-						<div
-							className="flex items-center inline-block font-normal text-center text-h4 leading-snug box-border btn-sm bg-white chip-md text-purple-500 border border-purple-500 hover:bg-opacity-80 rounded-xl p-1 w-8 ml-3"
-							//style="margin-right: 11px; height: 24px;"
-						>
+						<div className="flex items-center inline-block font-normal text-center text-h4 leading-snug box-border btn-sm bg-white chip-md text-purple-500 border border-purple-500 hover:bg-opacity-80 rounded-xl p-1 w-8 ml-3">
 							<img
 								className="ml-1"
 								alt="icon_chevron_left_primary"
@@ -341,16 +493,12 @@ export default () => {
 						</div>
 					</button>
 					<button
-						//	data-ref="btn_next"
 						className="appearance-none box-border focus:outline-none cursor-pointer"
 						onClick={() => {
 							onClickNext();
 						}}
 					>
-						<div
-							className="flex items-center inline-block font-normal text-center text-h4 leading-snug box-border btn-sm bg-white chip-md text-purple-500 border border-purple-500 hover:bg-opacity-80 rounded-xl p-1 w-8 ml-3"
-							//	style="height: 24px;"
-						>
+						<div className="flex items-center inline-block font-normal text-center text-h4 leading-snug box-border btn-sm bg-white chip-md text-purple-500 border border-purple-500 hover:bg-opacity-80 rounded-xl p-1 w-8 ml-3">
 							<img
 								className="ml-1"
 								alt="icon_chevron_right_primary"
@@ -368,9 +516,10 @@ export default () => {
 						</a>
 					</div>
 				</div>
-				<div className="flex">
-					<div className="mt-16">{hourList}</div>
-					<div className="flex">{dateList}</div>
+				<div className="flex ">{dateListHeader}</div>
+				<div className="flex toScroll">
+					<div className="mt-16   h-[500px]">{hourList}</div>
+					<div className="mt-16 flex  h-[500px]">{dateList()}</div>
 				</div>
 			</SlotCols>
 			<div className="min-w-[370px] fixed right-0 bg-white h-[300px]">3</div>

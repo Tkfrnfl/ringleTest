@@ -1,15 +1,13 @@
-import React from 'react';
-import TimeFirst from './component/timeFirstPage';
+import React from "react";
+import TimeFirst from "./component/timeFirstPage";
+import "../src/css/index.css";
 
 function App() {
-
-
-
-  return (
-    <div>
-      <TimeFirst/>
-    </div>
-  );
+	return (
+		<div className="element">
+			<TimeFirst />
+		</div>
+	);
 }
 
 export default App;

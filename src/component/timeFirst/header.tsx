@@ -1,19 +1,14 @@
-import React, { useEffect,useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled, { css } from "styled-components";
 import logo from "../../assets/img/logo_purple.svg";
 
-
 export default () => {
-	
-   const windowSize = useRef([window.innerWidth, window.innerHeight]);
-	// useEffect(()=>{
+	const windowSize = useRef([window.innerWidth, window.innerHeight]);
 
-	// },[]);
-    const Width=styled.div<{width:number}>`
-     width:${(props)=>props.width}px
-   
-`
+	const Width = styled.div<{ width: number }>`
+		width: ${(props) => props.width}px;
+	`;
 	return (
 		<div className="spaces-space-inner overflow-hidden">
 			<div className="border-b-1 flex h-[71px] w-full items-center border-gray-200 bg-gray-50 pl-[24px]">
@@ -49,7 +44,7 @@ export default () => {
 						</a>
 					</div>
 
-                    <Width width={windowSize.current[0]-1100}/>
+					<Width width={windowSize.current[0] - 1100} />
 					<div className="col text-gray-700 lgd:hidden font-normal col-auto text-sm ml-12 min-w-[150px]">
 						예약 신청한 수업
 						<span className="ml-[8px] text-[14px] font-medium text-purple-500">
@@ -58,15 +53,8 @@ export default () => {
 					</div>
 
 					<div className="col col-auto mr-6">
-						<button
-							className="appearance-none box-border focus:outline-none cursor-pointer ml-6 bg-gray-200  min-w-[150px]  min-h-[42px] rounded"
-					
-						>
-							<div
-		
-								className="inline-block font-normal text-center text-h4 leading-snug box-border border border-gray-200 bg-gray-200 text-gray-300 hover:bg-gray-200 btn-md"
-							
-							>
+						<button className="appearance-none box-border focus:outline-none cursor-pointer ml-6 bg-gray-200  min-w-[150px]  min-h-[42px] rounded">
+							<div className="inline-block font-normal text-center text-h4 leading-snug box-border border border-gray-200 bg-gray-200 text-gray-300 hover:bg-gray-200 btn-md">
 								다음
 							</div>
 						</button>
@@ -75,6 +63,4 @@ export default () => {
 			</div>
 		</div>
 	);
-
 };
-

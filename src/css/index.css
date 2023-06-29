@@ -9,30 +9,76 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.element {
+  scroll-snap-stop: always;
+}
+.toScroll{
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+}
+.toScroll::-webkit-scrollbar {
+  display: none;
+}
+
 
 .DayPicker {
   display: inline-block;
   font-size: 12px;
+}
+.rdp {
+  --rdp-cell-size: 33px;
 
 }
 .slot-border{
-  height: 20px;
+  height: 30px;
   width: 10px;
   border: 1px solid gray;
   border-width: 0px 1px 1px 0px;
 }
 .slot-border-dashed{
-  height: 20px;
+  height: 30px;
   width: 10px;
   border: 1px solid gray;
   border-width: 0px 1px 1px 0px;
 }
-.slot-time{
-  
+
+.topbar-slot-holiday{
+   color: red;
+}
+.topbar-slot-today{
+  color: purple;
+}
+
+.slot-day-of-week{
+ font-weight: 600;
+ font-size: 20px;
+ margin-top: 10px;
+ margin-bottom: 10px;
+}
+.slot-day-of-week-today{
+  font-weight: 600;
+  font-size: 20px;
+  color: white;
+  background-color: purple;
+  border-radius: 16px;
+  margin: auto;
+  height: 33px;
+  width: 33px;
+  margin-top: 10px;
+  background-size: 30%;
+  padding-top: 3px;
+  margin-top: 7px;
+
+
+}
+.btn-hide{
+  visibility:hidden;
 }
