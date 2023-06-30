@@ -37,19 +37,27 @@ code {
   --rdp-cell-size: 33px;
 
 }
+.slot-header{
+  box-shadow: 0 4px 4px -4px black;
+}
 .slot-border{
   height: 30px;
   width: 10px;
-  border: 1px solid gray;
+  border: 1px solid #e4e7f4;
   border-width: 0px 1px 1px 0px;
 }
 .slot-border-dashed{
   height: 30px;
   width: 10px;
-  border: 1px solid gray;
+  border: 1px solid #e4e7f4;
   border-width: 0px 1px 1px 0px;
 }
-
+.slot-border-nondashed{
+  height: 30px;
+  width: 10px;
+  border: 1px solid #e4e7f4;
+  border-width: 0px 1px 0px 0px;
+}
 .topbar-slot-holiday{
    color: red;
 }
@@ -79,6 +87,37 @@ code {
 
 
 }
+
+.slot-border-on{
+  border: 1px solid #e4e7f4;
+  border-width: 1px 1px 1px 0px;
+  border-style: solid solid dashed solid;
+  border-bottom-color: white;
+}
+.slot-border-on-work{
+  border: 1px solid #e4e7f4;
+  border-width: 1px 1px 1px 0px;
+  border-style: solid solid dashed solid;
+
+}
+.slot-border-half{
+  border: 1px solid #e4e7f4;
+  border-width: 0px 1px 0px 0px;
+}
+.slot-border-on-rest{
+  border: 0px solid #e4e7f4;
+  border-width: 1px 1px 1px 1px;
+  border-style: solid none none none;
+
+}
+.slot-border-half-rest{
+  border: 0px solid #e4e7f4;
+  border-width: 0px 1px 0px 0px;
+  border-style: solid none none none;
+}
 .btn-hide{
   visibility:hidden;
+}
+.slot-hover{
+  font-size: 12px;
 }

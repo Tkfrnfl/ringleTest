@@ -1,16 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled, { css } from "styled-components";
-
-import { addDays, addHours, format } from "date-fns";
+import BodyCols3 from "./bodyCols3";
+import { addDays, addHours, format, setHours } from "date-fns";
 import { ko, tr } from "date-fns/locale";
-import {
-	CaptionProps,
-	DayPicker,
-	useNavigation,
-	DateFormatter,
-	DateRange,
-} from "react-day-picker";
+import { chooseClass } from "../../redux/actions";
+import { DayPicker, DateFormatter, DateRange } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import "../../css/index.css";
 
@@ -19,7 +14,8 @@ const today = new Date();
 export default () => {
 	const [screenSize, setScreenSize] = useState(getCurrentDimension());
 	const [showNotice, setShowNotice] = useState(true);
-
+	const [selectedRow, setSelectedRow] = useState(0);
+	const dispatch = useDispatch();
 	function getCurrentDimension(): any {
 		//화면 리사이징
 		return {
@@ -37,7 +33,6 @@ export default () => {
 			window.removeEventListener("resize", updateDimension);
 		};
 	}, [screenSize]);
-
 	const formatCaption: DateFormatter = (month, options) => {
 		//달력 헤더 커스텀
 		return (
@@ -95,11 +90,10 @@ export default () => {
 		}
 	};
 	const onMonthChange = (props: Date) => {
-		console.log(props);
 		setOriginMonth(props);
 	};
 	const [originMonth, setOriginMonth] = useState<Date | undefined>(
-		defaultSelected.from,
+		defaultSelected.to,
 	);
 	//달력에서 범위 누를시
 	const onClickRange = (props: any) => {
@@ -175,7 +169,7 @@ color: balck;
 		}
 
 		const btn = document.getElementById(btnId);
-
+		console.log(btn);
 		if (btn) {
 			btn!.style.visibility = "hidden";
 		}
@@ -205,15 +199,46 @@ color: balck;
 	//각시간대 컴포넌트 생성
 	const hourList: JSX.Element[] = hours.map((hour, index) => {
 		return (
-			<div key={index} className="row">
-				<div className="relative w-[70px] h-[42px]">
-					<div className="absolute right-[1px] slot-border"></div>
-				</div>
+			<div key={index} className="row  -mt-4  text-xs ">
+				<div className="mt-0 slot-time">{hour}</div>
 
-				<div className="relative w-[70px] h-[30px] text-xs">
-					<div className="-mt-4 slot-time">{hour}</div>
-					<div className="-mt-4 absolute right-[1px] slot-border-dashed"></div>
-				</div>
+				{hour == "새벽3시" || hour == "오후14시" ? (
+					<div className="flex">
+						<div className=" reltive w-[0px] h-[20px] mt-2 pl-3">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								aria-hidden="true"
+								role="img"
+								width="18"
+								height="18"
+								preserveAspectRatio="xMidYMid meet"
+								viewBox="0 0 24 24"
+							>
+								<path
+									fill="currentColor"
+									d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2s2-.9 2-2s-.9-2-2-2z"
+								></path>
+							</svg>
+						</div>
+						<div className="row">
+							<div className="relative w-[58px] h-[30px]">
+								<div className=" -mt-0 absolute right-[1px] slot-border-nondashed"></div>
+							</div>
+							<div className="relative w-[58px] h-[30px]">
+								<div className="-mt-0 absolute right-[1px] slot-border-dashed"></div>
+							</div>
+						</div>
+					</div>
+				) : (
+					<div>
+						<div className="relative w-[70px] h-[30px]">
+							<div className=" -mt-0 absolute right-[1px] slot-border"></div>
+						</div>
+						<div className="relative w-[70px] h-[30px]">
+							<div className="-mt-0 absolute right-[1px] slot-border-dashed"></div>
+						</div>
+					</div>
+				)}
 			</div>
 		);
 	});
@@ -224,7 +249,12 @@ color: balck;
 	//range State기반으로 생성 현재시간과 비교하여 생성
 	function hourNumberList(numSlot: number): JSX.Element[] {
 		const arr: JSX.Element[] = [];
-
+		arr.push(
+			// top slot
+			<SlotColsSm className="row" width={(screenSize.width - 700) / 8}>
+				<div className="relative slot-border-half  h-[30px] bg-[#eff1f9]"></div>
+			</SlotColsSm>,
+		);
 		for (let i = 0; i < hoursNumber.length; i++) {
 			const gridDateO = addDays(range!.from!, numSlot);
 			const gridDateHalf = addDays(range!.from!, numSlot);
@@ -254,28 +284,23 @@ color: balck;
 					<SlotColsSm
 						key={i}
 						className="row"
-						onClick={() => {
-							onClickSlot(i);
-						}}
 						width={(screenSize.width - 700) / 8}
 					>
-						<div className="relative  h-[30px] bg-purple-300"></div>
-						<div className="relative  h-[30px]  bg-purple-300"></div>
+						<div className="relative slot-border-on-rest  h-[30px] bg-[#eff1f9]"></div>
+						<div className="relative  slot-border-half-rest h-[30px]  bg-[#eff1f9]"></div>
 					</SlotColsSm>,
 				);
 			} else {
 				arr.push(
-					<div
-						key={i}
+					<SlotColsSm
+						key={String(numSlot) + "|" + String(hoursNumber[i])}
 						className="row"
-						onClick={() => {
-							onClickSlot(i);
-						}}
+						width={(screenSize.width - 700) / 8}
 					>
 						{oclock ? (
 							<div
 								id={String(numSlot) + String(hoursNumber[i]) + "|on"}
-								className="relative  h-[20px]"
+								className="relative slot-border-on-work  h-[30px]"
 								onMouseOver={(e: any) => {
 									onHoverButton(e);
 								}}
@@ -284,19 +309,22 @@ color: balck;
 								}}
 							>
 								<div
-									className="btn-hide"
+									className="btn-hide slot-hover bg-purple-200 rounded-md"
 									id={String(numSlot) + String(hoursNumber[i]) + "on"}
+									onClick={(e: any) => {
+										onClickSlot(e, false, i);
+									}}
 								>
-									test
+									{hours[i]}
 								</div>
 							</div>
 						) : (
-							<div className="relative  h-[20px] bg-purple-300"></div>
+							<div className="relative slot-border-on  h-[30px] bg-[#eff1f9]"></div>
 						)}
 						{half ? (
 							<div
 								id={String(numSlot) + String(hoursNumber[i]) + "|half"}
-								className="relative  h-[20px]"
+								className="relative slot-border-half  h-[30px]"
 								onMouseOver={(e: any) => {
 									onHoverButton(e);
 								}}
@@ -305,16 +333,19 @@ color: balck;
 								}}
 							>
 								<div
-									className="btn-hide"
+									className="btn-hide slot-hover bg-purple-200 rounded-md"
 									id={String(numSlot) + String(hoursNumber[i]) + "half"}
+									onClick={(e: any) => {
+										onClickSlot(e, true, i);
+									}}
 								>
-									test
+									{hours[i] + "30분"}
 								</div>
 							</div>
 						) : (
-							<div className="relative  h-[20px]  bg-purple-300"></div>
+							<div className="relative slot-border-half  h-[30px] bg-[#eff1f9]"></div>
 						)}
-					</div>,
+					</SlotColsSm>,
 				);
 			}
 		}
@@ -326,12 +357,12 @@ color: balck;
 	const dateListHeader: JSX.Element[] = date.map((date, index) => {
 		const indexPlusDate = addDays(range!.from!, index);
 		return (
-			<div key={index}>
+			<div key={index} className="z-10 bg-white">
 				<div key={index} className="row text-center text-sm ">
 					{today.getDay() == index ? (
 						<SlotColsSm
 							className="topbar-slot-today"
-							width={(screenSize.width - 700) / 7}
+							width={(screenSize.width - 700) / 7.8}
 						>
 							<div>{date}</div>
 							<div className="slot-day-of-week-today">
@@ -341,7 +372,7 @@ color: balck;
 					) : today.getDay() != index && (date == "일" || date == "토") ? (
 						<SlotColsSm
 							className="topbar-slot-holiday"
-							width={(screenSize.width - 700) / 8}
+							width={(screenSize.width - 700) / 7.8}
 						>
 							<div>{date}</div>
 							<div className="slot-day-of-week">{indexPlusDate.getDate()}</div>
@@ -364,7 +395,7 @@ color: balck;
 			arr.push(
 				<div
 					onClick={() => {
-						onClickSlot(i);
+						setSelectedRow(i);
 					}}
 				>
 					{hourNumberList(i)}
@@ -374,18 +405,31 @@ color: balck;
 		return arr;
 	}
 
-	const onClickSlot = (props: any) => {
-		console.log(props);
-	};
-	const onClickSlotRow = (props: any) => {
-		console.log(props);
+	const onClickSlot = (props: any, isHalf: boolean, hour: number) => {
+		// console.log(selectedRow);
+		// console.log(props);
+
+		const selectedSlot = props.target.id;
+		let selectedDay = range!.from!;
+
+		selectedDay = addDays(selectedDay, selectedSlot[0]);
+
+		selectedDay?.setHours(hour);
+		if (isHalf) {
+			selectedDay.setMinutes(30);
+		} else {
+			selectedDay.setMinutes(0);
+		}
+		console.log(selectedDay);
+		dispatch(chooseClass(selectedDay));
 	};
 
 	//body 전체 컴포넌트
 	return (
 		<div className="flex ">
+			{/* cols-1 */}
 			<div>
-				<div className="h-[110px]"> </div>
+				<div className="h-[150px]"> </div>
 				<div className="min-w-[220px]">
 					<style>{css}</style>
 					<DayPicker
@@ -442,6 +486,7 @@ color: balck;
 				</div>
 			</div>
 
+			{/* cols-2 */}
 			<SlotCols className="min-w-[600px] " width={screenSize.width - 700}>
 				{showNotice && (
 					<Notice
@@ -516,13 +561,20 @@ color: balck;
 						</a>
 					</div>
 				</div>
-				<div className="flex ">{dateListHeader}</div>
-				<div className="flex toScroll">
-					<div className="mt-16   h-[500px]">{hourList}</div>
-					<div className="mt-16 flex  h-[500px]">{dateList()}</div>
+				<div className="flex ml-16 h-[70px] ">{dateListHeader}</div>
+				<div className="flex toScroll -mt-6 pt-0 z-0">
+					<div className=" mt-3 text-[#80839e] h-[500px]">
+						<div className="relative w-[70px] h-[30px]">
+							<div className="absolute right-[1px] slot-border"></div>
+						</div>
+						{hourList}
+					</div>
+					<div className="mt-3 -ml-[1px] flex  h-[550px]">{dateList()}</div>
 				</div>
 			</SlotCols>
-			<div className="min-w-[370px] fixed right-0 bg-white h-[300px]">3</div>
+			<div className="min-w-[370px] fixed right-0 bg-white">
+				<BodyCols3></BodyCols3>
+			</div>
 		</div>
 	);
 };
