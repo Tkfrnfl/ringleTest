@@ -10,7 +10,7 @@ export default () => {
 		width: ${(props) => props.width}px;
 	`;
 	return (
-		<div className="spaces-space-inner overflow-hidden">
+		<div className="spaces-space-inner overflow-hidden border-gray-200 border">
 			<div className="border-b-1 flex h-[71px] w-full items-center border-gray-200 bg-gray-50 pl-[24px]">
 				<div className="row flex h-full w-full items-center">
 					<div className="col col-auto text-xs  min-w-[70px]">

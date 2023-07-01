@@ -6,6 +6,7 @@ import { addDays, addHours, format, setHours } from "date-fns";
 import { ko, tr } from "date-fns/locale";
 import { chooseClass } from "../../redux/actions";
 import { DayPicker, DateFormatter, DateRange } from "react-day-picker";
+import humanImg from "../../assets/img/human.jpg";
 import "react-day-picker/dist/style.css";
 import "../../css/index.css";
 
@@ -14,7 +15,10 @@ const today = new Date();
 export default () => {
 	const [screenSize, setScreenSize] = useState(getCurrentDimension());
 	const [showNotice, setShowNotice] = useState(true);
-	const [selectedRow, setSelectedRow] = useState(0);
+	//const [selectedRow, setSelectedRow] = useState(0);
+	const [selectTutor, setSelectTutor] = useState<boolean[]>([false]);
+	const [selectedSlotState, setSelectedSlotState] = useState("");
+	const [hoveredSlotState, setHoverdSlotState] = useState("");
 	const dispatch = useDispatch();
 	function getCurrentDimension(): any {
 		//화면 리사이징
@@ -33,6 +37,21 @@ export default () => {
 			window.removeEventListener("resize", updateDimension);
 		};
 	}, [screenSize]);
+	// 누른 튜터slot버튼 활성화
+	useEffect(() => {
+		const btn = document.getElementById(selectedSlotState);
+		if (btn) {
+			console.log(btn);
+			btn!.style.visibility = "visible";
+		}
+	}, [selectedSlotState]);
+	useEffect(() => {
+		const btn = document.getElementById(hoveredSlotState);
+		if (btn) {
+			console.log(btn);
+			btn!.style.visibility = "hidden";
+		}
+	}, [hoveredSlotState]);
 	const formatCaption: DateFormatter = (month, options) => {
 		//달력 헤더 커스텀
 		return (
@@ -147,10 +166,11 @@ color: balck;
 	function onHoverButton(props: any) {
 		const btnArr = props.target.id.split("|");
 		let btnId;
-		if (btnArr[1] == undefined) {
+		if (btnArr[1] == undefined && props.target.id.includes("Hover")) {
+			// 빠른 이동시 hover 추가 체크
 			btnId = btnArr[0];
 		} else {
-			btnId = btnArr[0] + btnArr[1];
+			btnId = btnArr[0] + btnArr[1] + "Hover";
 		}
 
 		const btn = document.getElementById(btnId);
@@ -162,14 +182,15 @@ color: balck;
 	function onLeaveButton(props: any) {
 		const btnArr = props.target.id.split("|");
 		let btnId;
-		if (btnArr[1] == undefined) {
+		if (btnArr[1] == undefined && props.target.id.includes("Hover")) {
+			// 빠른 이동시 hover 추가 체크
 			btnId = btnArr[0];
 		} else {
-			btnId = btnArr[0] + btnArr[1];
+			btnId = btnArr[0] + btnArr[1] + "Hover";
 		}
 
 		const btn = document.getElementById(btnId);
-		console.log(btn);
+		//console.log(btn);
 		if (btn) {
 			btn!.style.visibility = "hidden";
 		}
@@ -294,7 +315,7 @@ color: balck;
 				arr.push(
 					<SlotColsSm
 						key={String(numSlot) + "|" + String(hoursNumber[i])}
-						className="row"
+						className="row z-20 "
 						width={(screenSize.width - 700) / 8}
 					>
 						{oclock ? (
@@ -309,13 +330,27 @@ color: balck;
 								}}
 							>
 								<div
-									className="btn-hide slot-hover bg-purple-200 rounded-md"
-									id={String(numSlot) + String(hoursNumber[i]) + "on"}
+									className="btn-hide slot-hover bg-purple-200 rounded-md border"
+									id={String(numSlot) + String(hoursNumber[i]) + "onHover"}
 									onClick={(e: any) => {
 										onClickSlot(e, false, i);
 									}}
 								>
 									{hours[i]}
+								</div>
+
+								<div
+									className="text-xs btn-hide flex border-purple-600 border p-1  shadow-md rounded-md -mt-5 "
+									id={String(numSlot) + String(hoursNumber[i]) + "onChoice"}
+								>
+									<div className="w-[15px] rounded-full">
+										<img
+											alt="avatar-img"
+											src={humanImg}
+											className="avatar-img rounded-full"
+										/>
+									</div>
+									튜터선택
 								</div>
 							</div>
 						) : (
@@ -333,13 +368,26 @@ color: balck;
 								}}
 							>
 								<div
-									className="btn-hide slot-hover bg-purple-200 rounded-md"
-									id={String(numSlot) + String(hoursNumber[i]) + "half"}
+									className="btn-hide slot-hover bg-purple-200 rounded-md border"
+									id={String(numSlot) + String(hoursNumber[i]) + "halfHover"}
 									onClick={(e: any) => {
 										onClickSlot(e, true, i);
 									}}
 								>
 									{hours[i] + "30분"}
+								</div>
+								<div
+									className="text-xs btn-hide flex border-purple-600 border p-1  shadow-md rounded-md -mt-5"
+									id={String(numSlot) + String(hoursNumber[i]) + "halfChoice"}
+								>
+									<div className="w-[15px] rounded-full">
+										<img
+											alt="avatar-img"
+											src={humanImg}
+											className="avatar-img rounded-full"
+										/>
+									</div>
+									튜터선택
 								</div>
 							</div>
 						) : (
@@ -357,7 +405,7 @@ color: balck;
 	const dateListHeader: JSX.Element[] = date.map((date, index) => {
 		const indexPlusDate = addDays(range!.from!, index);
 		return (
-			<div key={index} className="z-10 bg-white">
+			<div key={index} className=" z-0 bg-white relative">
 				<div key={index} className="row text-center text-sm ">
 					{today.getDay() == index ? (
 						<SlotColsSm
@@ -394,9 +442,9 @@ color: balck;
 		for (let i = 0; i < 7; i++) {
 			arr.push(
 				<div
-					onClick={() => {
-						setSelectedRow(i);
-					}}
+				// onClick={() => {
+				// 	setSelectedRow(i);
+				// }}
 				>
 					{hourNumberList(i)}
 				</div>,
@@ -406,10 +454,18 @@ color: balck;
 	}
 
 	const onClickSlot = (props: any, isHalf: boolean, hour: number) => {
-		// console.log(selectedRow);
-		// console.log(props);
-
+		//튜터선택 슬롯
+		const btn = document.getElementById(selectedSlotState);
+		if (btn) {
+			btn!.style.visibility = "hidden"; //기존 선택버튼 숨기기
+		}
+		const btnHover = document.getElementById(props.target.id);
+		if (btnHover) {
+			setHoverdSlotState(props.target.id)//기존 hover버튼 숨기기
+		}
+		// 튜터선택 State disptch
 		const selectedSlot = props.target.id;
+
 		let selectedDay = range!.from!;
 
 		selectedDay = addDays(selectedDay, selectedSlot[0]);
@@ -417,23 +473,29 @@ color: balck;
 		selectedDay?.setHours(hour);
 		if (isHalf) {
 			selectedDay.setMinutes(30);
+			let halfChoiceId = props.target.id.split("half");
+			halfChoiceId = halfChoiceId[0] + "halfChoice";
+			setSelectedSlotState(halfChoiceId);
 		} else {
 			selectedDay.setMinutes(0);
+			let halfChoiceId = props.target.id.split("on");
+			halfChoiceId = halfChoiceId[0] + "onChoice";
+			setSelectedSlotState(halfChoiceId);
 		}
 		console.log(selectedDay);
-		dispatch(chooseClass(selectedDay));
+		dispatch(chooseClass(selectedDay, props.target.innerText));
 	};
 
 	//body 전체 컴포넌트
 	return (
-		<div className="flex ">
+		<div className="flex relative">
 			{/* cols-1 */}
 			<div>
 				<div className="h-[150px]"> </div>
 				<div className="min-w-[220px]">
 					<style>{css}</style>
 					<DayPicker
-						className="DayPicker rdp"
+						className="DayPicker rdp  relative z-0"
 						mode="range"
 						selected={range}
 						onSelect={onClickRange}
@@ -561,8 +623,8 @@ color: balck;
 						</a>
 					</div>
 				</div>
-				<div className="flex ml-16 h-[70px] ">{dateListHeader}</div>
-				<div className="flex toScroll -mt-6 pt-0 z-0">
+				<div className="flex ml-16 h-[70px] relative">{dateListHeader}</div>
+				<div className="flex toScroll -mt-6 pt-0  -z-10 relative">
 					<div className=" mt-3 text-[#80839e] h-[500px]">
 						<div className="relative w-[70px] h-[30px]">
 							<div className="absolute right-[1px] slot-border"></div>
@@ -572,7 +634,7 @@ color: balck;
 					<div className="mt-3 -ml-[1px] flex  h-[550px]">{dateList()}</div>
 				</div>
 			</SlotCols>
-			<div className="min-w-[370px] fixed right-0 bg-white">
+			<div className="min-w-[370px] fixed right-0 bg-white ">
 				<BodyCols3></BodyCols3>
 			</div>
 		</div>

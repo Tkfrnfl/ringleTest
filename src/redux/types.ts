@@ -1,4 +1,5 @@
 export enum ActionType{
     CHOOSE_CLASS="CHOOSE_CLASS",
-
+    SET_TICKET="SET_TICKET",
+    CHOOSE_TICKET="CHOOSE_TICKET",
 }

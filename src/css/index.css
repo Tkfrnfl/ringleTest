@@ -27,7 +27,11 @@ code {
 .toScroll::-webkit-scrollbar {
   display: none;
 }
+.toScroll-tutor{
+  overflow-y: scroll;
+  overflow-x: hidden;
 
+}
 
 .DayPicker {
   display: inline-block;

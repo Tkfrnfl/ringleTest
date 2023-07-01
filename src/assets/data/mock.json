@@ -1,0 +1,34 @@
+{"data":[
+    {"src":"https://d38emex6h5e12i.cloudfront.net/avatar/76dded19cd1da351bab892fd58a03d67d9dd05232c1dc88fe89f4c56688bcd48_55bfa0d2b537.jpg?w=71",
+    "name":"Rufaro",
+    "univ":"Harvard University",
+    "major":"Government",
+    "accpet":100,
+    "tag":"Admissions"
+    },
+
+    {"src":"https://d38emex6h5e12i.cloudfront.net/avatar/b8220c7ceb069ffe121a57d08b44ff100ff6d7169bfd96f80e148f76d9cd09dc_2caf87c8ccc6.JPG?w=71",
+    "name":"Stephanie",
+    "univ":"New York University",
+    "major":"Pre-medicine",
+    "accpet":100,
+    "tag":"Interviews"
+    },
+    {"src":"https://d38emex6h5e12i.cloudfront.net/avatar/f052589d4864d64ab4c5f86243177448da10d04e1a90e6e133a467ab8f7e731f_11007e64e17e.jpg?w=71",
+    "name":"Kristi",
+    "univ":"University of Southern California",
+    "major":"International Business",
+    "accpet":100,
+    "tag":"Business"
+    },
+    {
+        "src":"https://d38emex6h5e12i.cloudfront.net/avatar/e9f98c3b4cd18119a9b46e25183fa9fd0690fd8bf19d1b1db6efff52b85340eb_f3ce9916c36f.jpg?w=71",
+        "name":"Callum",
+        "univ":"University of Bristol",
+        "major":"History",
+        "accpet":100,
+        "tag":"Sport"
+    }
+
+]
+}
