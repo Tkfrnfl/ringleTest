@@ -5,7 +5,9 @@ import BodyCols3 from "./bodyCols3";
 import { addDays, addHours, format, setHours } from "date-fns";
 import { ko, tr } from "date-fns/locale";
 import { chooseClass } from "../../redux/actions";
+import { RootState } from "../../redux/reducer";
 import { DayPicker, DateFormatter, DateRange } from "react-day-picker";
+import { selectTutorType } from "../../redux/reducer";
 import humanImg from "../../assets/img/human.jpg";
 import "react-day-picker/dist/style.css";
 import "../../css/index.css";
@@ -16,10 +18,33 @@ export default () => {
 	const [screenSize, setScreenSize] = useState(getCurrentDimension());
 	const [showNotice, setShowNotice] = useState(true);
 	//const [selectedRow, setSelectedRow] = useState(0);
-	const [selectTutor, setSelectTutor] = useState<boolean[]>([false]);
+	const [selectTutor, setSelectTutor] = useState<selectTutorType>();
 	const [selectedSlotState, setSelectedSlotState] = useState("");
 	const [hoveredSlotState, setHoverdSlotState] = useState("");
+	const selectedTutor = useSelector(
+		(state: RootState) => state.selectTutorReducer,
+	);
+
 	const dispatch = useDispatch();
+
+	const defaultSelect: selectTutorType = {
+		type: "",
+		payload: {
+			src: "",
+		},
+	};
+	//튜터 선택 state 체크
+	useEffect(() => {
+		async function tutorSelectFunc() {
+			const sinfo: selectTutorType = await selectedTutor;
+			if (sinfo) {
+				console.log(selectTutor);
+				setSelectTutor(sinfo.payload);
+			}
+		}
+		tutorSelectFunc();
+	}, [selectedTutor]);
+
 	function getCurrentDimension(): any {
 		//화면 리사이징
 		return {
@@ -164,6 +189,7 @@ color: balck;
 	`;
 	//날짜 슬롯부분 함수
 	function onHoverButton(props: any) {
+		console.log(props);
 		const btnArr = props.target.id.split("|");
 		let btnId;
 		if (btnArr[1] == undefined && props.target.id.includes("Hover")) {
@@ -315,7 +341,7 @@ color: balck;
 				arr.push(
 					<SlotColsSm
 						key={String(numSlot) + "|" + String(hoursNumber[i])}
-						className="row z-20 "
+						className="row  "
 						width={(screenSize.width - 700) / 8}
 					>
 						{oclock ? (
@@ -350,6 +376,18 @@ color: balck;
 											className="avatar-img rounded-full"
 										/>
 									</div>
+									{/* {selectTutor?.payload.src == "" ? (
+										<div className="w-[15px] rounded-full">
+											<img
+												alt="avatar-img"
+												src={humanImg}
+												className="avatar-img rounded-full"
+											/>
+											<div>튜터선택</div>
+										</div>
+									) : (
+										<div><img src={selectTutor?.payload.src}></img>선택완료</div>
+									)} */}
 									튜터선택
 								</div>
 							</div>
@@ -405,7 +443,7 @@ color: balck;
 	const dateListHeader: JSX.Element[] = date.map((date, index) => {
 		const indexPlusDate = addDays(range!.from!, index);
 		return (
-			<div key={index} className=" z-0 bg-white relative">
+			<div key={index} className="  bg-white relative">
 				<div key={index} className="row text-center text-sm ">
 					{today.getDay() == index ? (
 						<SlotColsSm
@@ -461,7 +499,7 @@ color: balck;
 		}
 		const btnHover = document.getElementById(props.target.id);
 		if (btnHover) {
-			setHoverdSlotState(props.target.id)//기존 hover버튼 숨기기
+			setHoverdSlotState(props.target.id); //기존 hover버튼 숨기기
 		}
 		// 튜터선택 State disptch
 		const selectedSlot = props.target.id;
@@ -623,8 +661,8 @@ color: balck;
 						</a>
 					</div>
 				</div>
-				<div className="flex ml-16 h-[70px] relative">{dateListHeader}</div>
-				<div className="flex toScroll -mt-6 pt-0  -z-10 relative">
+				<div className="flex ml-16 h-[80px] relative">{dateListHeader}</div>
+				<div className="flex toScroll -mt-6 pt-0  relative  ">
 					<div className=" mt-3 text-[#80839e] h-[500px]">
 						<div className="relative w-[70px] h-[30px]">
 							<div className="absolute right-[1px] slot-border"></div>

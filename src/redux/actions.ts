@@ -28,11 +28,20 @@ const setTicket = () => {
 		},
 	};
 };
+const selectTutor = (img:string) => {
+	return {
+		type: ActionType.SELECT_TUTOR,
+		payload:{
+			img:img
+		},
+	};
+};
 
 type ActionObject =
 	| ReturnType<typeof chooseClass>
 	| ReturnType<typeof setTicket>
-	| ReturnType<typeof chooseTicket>;
+	| ReturnType<typeof chooseTicket>
+	| ReturnType<typeof selectTutor>;
 
-export { chooseClass, setTicket,chooseTicket };
+export { chooseClass, setTicket,chooseTicket,selectTutor };
 export type { ActionObject };

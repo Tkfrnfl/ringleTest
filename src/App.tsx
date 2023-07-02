@@ -18,7 +18,7 @@ function App() {
 	},[])
 
 	return (
-		<div className="element">
+		<div className="element relative">
 			<ChooseTicketModal open={modalOpen} close={closeModal} ></ChooseTicketModal>
 			<TimeFirst />
 		</div>

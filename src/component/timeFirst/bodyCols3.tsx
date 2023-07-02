@@ -5,6 +5,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { RootState } from "../../redux/reducer";
 import "../../css/index.css";
 import mock from "../../assets/data/mock.json";
+import  {selectTutor as selectTutorAction}  from "../../redux/actions";
 
 export default () => {
 	const autoMatchRef = useRef<HTMLDivElement>(null);
@@ -17,6 +18,7 @@ export default () => {
 	const [selectAutoMatch, setSelectAutoMatch] = useState(false);
 	const [hoverAutoMatch, setHoverAutoMatch] = useState(false);
 	const [selectTutor, setSelectTutor] = useState<boolean[]>([false]);
+	const dispatch=useDispatch()
 	useEffect(() => {
 		async function selectedSlotInfo() {
 			const selectedSlot: any = await selectedSlotState;
@@ -32,6 +34,8 @@ export default () => {
 		var selectedList=[...selectTutor]
 		selectedList[i]=true
 		setSelectTutor(selectedList)
+		dispatch(selectTutorAction(mock.data[i].src))
+
 	};
 	const tutorData: JSX.Element[] = mock.data.map((item, index: number) => {
 		return (
@@ -148,6 +152,7 @@ export default () => {
 							autoMatchRef.current!.style.borderColor = "purple";
 							autoMatchRef.current!.style.borderWidth = "1px";
 							setSelectAutoMatch(true);
+							dispatch(selectTutorAction("https://d38emex6h5e12i.cloudfront.net/web/202210/ic-auto-matching.png"))
 						}}
 						ref={autoMatchRef}
 					>
