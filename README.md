@@ -5,6 +5,7 @@ Typescript4.4.2
 
 # 실행방법
 npm i
+
 npm start
 
 
